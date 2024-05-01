@@ -1,4 +1,4 @@
-#include "liblamport.h"
+#include "headers/liblamport.h"
 
 /* Variaveis compartilhadas */
 __mutex_thread mutex_data_structure[N];

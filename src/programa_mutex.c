@@ -1,7 +1,16 @@
-#include "liblamport.h"
 #include <pthread.h>
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <errno.h>
+#include <ctype.h>
+#include <pthread.h>
+#include "headers/constants.h"
 
 int a = 0;
+
+pthread_mutex_t lock;
 
 static void * thread_process(void *arg)
 {
@@ -9,14 +18,15 @@ static void * thread_process(void *arg)
         printf("Hello! I'm thread %d!\n", j);
         
         //dormir();
-        lamport_mutex_lock(j);
+        pthread_mutex_lock(&lock);
+
         printf("I'm thread %d and I'm entering my critical region!\n", j);        
         for(i = 0 ; i < 3000000 ; i++){
             a++;
         }
         printf("%d\n", a);
         printf("I'm thread %d and I'm leaving my critical region!\n", j);
-        lamport_mutex_unlock(j);
+        pthread_mutex_unlock(&lock);
 }
 
 int main(int argc, char **argv)
@@ -29,7 +39,7 @@ int main(int argc, char **argv)
     
     ret = pthread_attr_init(&attr);
 
-    lamport_mutex_init();
+    pthread_mutex_init(&lock, NULL);
     
     for (thread_num = 0; thread_num < N; thread_num++) {
 	    tinfo_id [thread_num] = thread_num;
@@ -41,9 +51,9 @@ int main(int argc, char **argv)
     for (thread_num = 0; thread_num < N; thread_num++) {
     	ret = pthread_join(tinfo_process[thread_num], NULL);
     	printf("Joined with thread id %d\n", thread_num);
-
-    	free(res);
     }
+
+    pthread_mutex_destroy(&lock);
 
     exit(EXIT_SUCCESS);
 }
