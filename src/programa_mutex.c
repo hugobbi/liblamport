@@ -21,7 +21,7 @@ static void * thread_process(void *arg)
         pthread_mutex_lock(&lock);
 
         printf("I'm thread %d and I'm entering my critical region!\n", j);        
-        for(i = 0 ; i < 3000000 ; i++){
+        for(i = 0 ; i < SUM_LIMIT ; i++){
             a++;
         }
         printf("%d\n", a);
