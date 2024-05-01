@@ -7,17 +7,16 @@ int a = 0;
 static void * thread_process(void *arg)
 {
         int i, j = *((int *) arg); 
-        printf("Hello! I'm thread %d!\n", j);
+        //printf("Hello! I'm thread %d!\n", j);
         
         //dormir();
-        lamport_mutex_lock(j);
-        printf("I'm thread %d and I'm entering my critical region!\n", j);        
         for(i = 0 ; i < SUM_LIMIT ; i++){
+            lamport_mutex_lock(j);
+            //printf("Sou a thread %d e estou entrando na região crítica!\n", j);
             a++;
+            //printf("Sou a thread %d e estou saindo na região crítica!\n", j);
+            lamport_mutex_unlock(j);
         }
-        printf("%d\n", a);
-        printf("I'm thread %d and I'm leaving my critical region!\n", j);
-        lamport_mutex_unlock(j);
 }
 
 int main(int argc, char **argv)
@@ -41,10 +40,12 @@ int main(int argc, char **argv)
     
     for (thread_num = 0; thread_num < N; thread_num++) {
     	ret = pthread_join(tinfo_process[thread_num], NULL);
-    	printf("Joined with thread id %d\n", thread_num);
+    	//printf("Joined with thread id %d\n", thread_num);
 
     	//free(res);
     }
+
+    printf("resultado final: %d\n", a);
 
     exit(EXIT_SUCCESS);
 }
